@@ -12,20 +12,15 @@ CRGB setupLeds[NUM_LEDS];
 boolean notzero = true;
 uint8_t paletteIndex = 0;
 
-
-/* typedef void (*SimplePatternList[])(); */
-/* SimplePatternList gPatterns = { rainbow, rainbowWithGlitter }; */
-
 const byte vibration = A0; // vibration sensor
 const int tapLevel = 20;
 unsigned long tapMillis;
-uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
-int beatMin = 50;
-int beatMax = NUM_LEDS;
-int beatLength = random(beatMin, beatMax);
-int beat = 30;
+/* int beatMin = 50; */
+/* int beatMax = NUM_LEDS; */
+/* int beat = random(beatMin, beatMax); */
+int beat = 26;
 int previousPosition;
 
 void setup() {
@@ -58,7 +53,6 @@ void loop()
     {
       leds[i] = setupLeds[i];
     }
-  /* FillLEDsFromPaletteColors(paletteIndex); */
 
   if(millis()-tapMillis < 800)
     {
@@ -73,12 +67,12 @@ void ColorBreather(uint8_t colorIndex) {
 
   uint8_t brightness = 255;
   fadeToBlackBy(setupLeds, NUM_LEDS, 1);
-  int position = beatsin8(beat, 0, beatLength);
+  int position = beatsin8(beat, 0, NUM_LEDS);
   if(position == 0 && notzero)
     {
       paletteIndex += 8;
       notzero = false;
-      beatLength = random(beatMin, beatMax);
+      /* beat = random(beatMin, beatMax); */
     }
   else if(position > 0)
     {
@@ -86,7 +80,7 @@ void ColorBreather(uint8_t colorIndex) {
     }
 
   Serial.print("position: ");
-  Serial.print(position);
+  Serial.print(position - 29);
   Serial.print(" beat: ");
   Serial.print(beat);
   Serial.print(" previousPosition: ");
