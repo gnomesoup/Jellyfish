@@ -1,7 +1,7 @@
 #include <FastLED.h>
 
 #define LED_PIN            6
-#define NUM_LEDS           60
+#define NUM_LEDS           80
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2811
 #define COLOR_ORDER        RGB
@@ -22,6 +22,11 @@ unsigned long tapMillis;
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
+int beatMin = 50;
+int beatMax = NUM_LEDS;
+int beatLength = random(beatMin, beatMax);
+int beat = 30;
+int previousPosition;
 
 void setup() {
   Serial.begin(57600);
@@ -48,64 +53,65 @@ void loop()
   static uint8_t startIndex = 0;
   startIndex = startIndex + 1;
 
-  sinelon(startIndex);
+  ColorBreather(startIndex);
+  for(int i; i < NUM_LEDS; i++)
+    {
+      leds[i] = setupLeds[i];
+    }
   /* FillLEDsFromPaletteColors(paletteIndex); */
 
-  if(millis()-tapMillis < 500)
+  if(millis()-tapMillis < 800)
     {
-      addGlitter(160);
+      addGlitter(200);
     }
   FastLED.show();
   // insert a delay to keep the framerate modest
   FastLED.delay(1000/FRAMES_PER_SECOND);
 }
 
-void sinelon(uint8_t colorIndex) {
+void ColorBreather(uint8_t colorIndex) {
 
   uint8_t brightness = 255;
-  fadeToBlackBy(leds, NUM_LEDS, 1);
-  int position = beatsin8(30, 0, NUM_LEDS);
-  position -= 28;
-  if(position > 0)
-  {
-    leds[position-1] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
-  }
+  fadeToBlackBy(setupLeds, NUM_LEDS, 1);
+  int position = beatsin8(beat, 0, beatLength);
   if(position == 0 && notzero)
     {
       paletteIndex += 8;
       notzero = false;
+      beatLength = random(beatMin, beatMax);
     }
   else if(position > 0)
     {
       notzero = true;
     }
+
   Serial.print("position: ");
-  Serial.print(position - 28);
-  Serial.print("colorIndex: ");
-  Serial.println(paletteIndex);
-
-}
-void FillLEDsFromPaletteColors( uint8_t colorIndex)
-{
-  uint8_t brightness = 255;
-  for(int i = NUM_LEDS-1; i >= 0; i--)
+  Serial.print(position);
+  Serial.print(" beat: ");
+  Serial.print(beat);
+  Serial.print(" previousPosition: ");
+  Serial.println(previousPosition);
+  position -= 29;
+  int prePixel;
+  if(position > previousPosition)
+    {
+      prePixel = position - 1;
+    }
+  else
+    {
+      prePixel = position + 1;
+    }
+  if(position > 0)
   {
-    leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending );
-    colorIndex += 1;
+    setupLeds[position] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
+    previousPosition = position;
   }
-}
+  if(prePixel > 0 && prePixel < NUM_LEDS)
+    {
+      setupLeds[prePixel] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
+    }
+  
 
-void rainbow()
-{
-  // FastLED's built-in rainbow generator
-  fill_rainbow( leds, NUM_LEDS, gHue, 2);
-}
-
-void rainbowWithGlitter()
-{
-  // built-in FastLED rainbow, plus some random sparkly glitter
-  rainbow();
-  addGlitter(80);
 }
 
 void addGlitter( fract8 chanceOfGlitter)
@@ -123,8 +129,6 @@ void checkTaps()
     {
       Serial.print("Vibration Level: ");
       Serial.println(analogRead(vibration));
-      /* gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns); */
-      /* rainbowWithGlitter(); */
       addGlitter(80);
       tapMillis = millis();
     }
