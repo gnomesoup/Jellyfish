@@ -1,7 +1,8 @@
 #include <FastLED.h>
 
 #define LED_PIN            6
-#define NUM_LEDS           80
+#define NUM_LEDS           60
+#define NUM_ACT_LEDS       32
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2811
 #define COLOR_ORDER        RGB
@@ -20,7 +21,7 @@ TBlendType    currentBlending;
 /* int beatMin = 50; */
 /* int beatMax = NUM_LEDS; */
 /* int beat = random(beatMin, beatMax); */
-int beat = 26;
+int beat = 30;
 int previousPosition;
 
 void setup() {
@@ -79,13 +80,7 @@ void ColorBreather(uint8_t colorIndex) {
       notzero = true;
     }
 
-  Serial.print("position: ");
-  Serial.print(position - 29);
-  Serial.print(" beat: ");
-  Serial.print(beat);
-  Serial.print(" previousPosition: ");
-  Serial.println(previousPosition);
-  position -= 29;
+  position -= (NUM_LEDS - NUM_ACT_LEDS) + 1;
   int prePixel;
   if(position > previousPosition)
     {
@@ -104,7 +99,12 @@ void ColorBreather(uint8_t colorIndex) {
     {
       setupLeds[prePixel] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
     }
-  
+  Serial.print("position: ");
+  Serial.print(position);
+  Serial.print(" beat: ");
+  Serial.print(beat);
+  Serial.print(" previousPosition: ");
+  Serial.println(previousPosition);
 
 }
 
