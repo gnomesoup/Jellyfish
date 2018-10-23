@@ -23,6 +23,7 @@ TBlendType    currentBlending;
 /* int beat = random(beatMin, beatMax); */
 int beat = 30;
 int previousPosition;
+int pulsePause = 127;
 
 void setup() {
   Serial.begin(57600);
@@ -41,7 +42,7 @@ void setup() {
 
 void loop()
 {
-  if(millis()-tapMillis > 2000)
+  if(millis()-tapMillis > 3000)
     {
       checkTaps();
     }
@@ -49,7 +50,10 @@ void loop()
   static uint8_t startIndex = 0;
   startIndex = startIndex + 1;
 
-  ColorBreather(startIndex);
+  if(millis()-pulsePause < )
+  {
+    ColorBreather(startIndex);
+  }
   for(int i; i < NUM_LEDS; i++)
     {
       leds[i] = setupLeds[i];
