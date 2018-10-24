@@ -7,6 +7,9 @@
 #define LED_TYPE           WS2811
 #define COLOR_ORDER        RGB
 #define FRAMES_PER_SECOND  60
+
+const int tapLevel = 32;
+
 CRGB leds[NUM_LEDS];
 CRGB setupLeds[NUM_LEDS];
 
@@ -15,14 +18,9 @@ uint8_t paletteIndex = 0;
 uint8_t startIndex = 0;
 
 const byte vibration = A0; // vibration sensor
-const int tapLevel = 20;
 unsigned long tapMillis;
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
-/* int beatMin = 50; */
-/* int beatMax = NUM_LEDS; */
-/* int beat = random(beatMin, beatMax); */
-uint8_t beat = 30;
 int previousPosition;
 unsigned long pulsePause = 500;
 unsigned long pulseTime = 0;
@@ -115,12 +113,6 @@ void ColorBreather() {
     {
       setupLeds[prePixel] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
     }
-  Serial.print("position: ");
-  Serial.print(position);
-  Serial.print(" beat: ");
-  Serial.print(beat);
-  Serial.print(" previousPosition: ");
-  Serial.println(previousPosition);
 
 }
 
@@ -135,7 +127,7 @@ void addGlitter( fract8 chanceOfGlitter)
 
 void checkTaps()
 {
-  if(analogRead(vibration)<15)
+  if(analogRead(vibration) < tapLevel )
     {
       Serial.print("Vibration Level: ");
       Serial.println(analogRead(vibration));
