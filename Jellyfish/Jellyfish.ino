@@ -61,7 +61,7 @@ void loop()
 
   if(millis()-tapMillis < 800)
     {
-      addGlitter(200);
+      addGlitter(255);
     }
   FastLED.show();
   // insert a delay to keep the framerate modest
@@ -94,12 +94,12 @@ void ColorBreather(uint8_t colorIndex) {
     {
       prePixel = position + 1;
     }
-  if(position > 0)
+  if(position >= 0)
   {
     setupLeds[position] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
     previousPosition = position;
   }
-  if(prePixel > 0 && prePixel < NUM_LEDS)
+  if(prePixel >= 0 && prePixel < NUM_LEDS)
     {
       setupLeds[prePixel] = ColorFromPalette(currentPalette, paletteIndex, brightness, currentBlending);
     }
