@@ -2,7 +2,7 @@
 
 #define LED_PIN            6
 #define NUM_LEDS           60
-#define NUM_ACT_LEDS       18
+#define NUM_ACT_LEDS       32
 #define BRIGHTNESS         128
 #define LED_TYPE           WS2811
 #define COLOR_ORDER        RGB
@@ -61,9 +61,9 @@ void loop()
   {
     Serial.println("Pause");
   }
-  for(int i; i < NUM_LEDS; i++)
+  for(int j; j < NUM_LEDS; j++)
     {
-      leds[i] = setupLeds[i];
+      leds[j] = setupLeds[j];
     }
 
   if(millis()-tapMillis < 800)
